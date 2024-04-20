@@ -14,10 +14,10 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/') {
-        next()
-    } else {
+    if (routes.every(route => route.path !== to.path)) {
         next('/')
+    } else {
+        next()
     }
 })
 

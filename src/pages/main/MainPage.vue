@@ -1,20 +1,24 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import CharacterService from '@/services/CharacterService'
 
 const isLoading = ref(false)
 const error = ref(null)
 const characters = ref([])
+const currentPage = ref(0)
+const totalPages = ref(1)
 
-async function fetchCharacters() {
+async function fetchCharacters(page) {
   isLoading.value = true
   try {
-    const response = await CharacterService.getCharacters()
-    const data = response.data?.results
-    if (!Array.isArray(data)) {
+    const response = await CharacterService.getCharacters({ page })
+    const data = response.data
+    if (!Array.isArray(data.results)) {
       throw new Error('Incorrect data')
     }
-    characters.value = data
+    characters.value = data.results
+    totalPages.value = data.info.pages
   } catch (e) {
     if (e instanceof Error) {
       error.value = e.message
@@ -26,8 +30,16 @@ async function fetchCharacters() {
   }
 }
 
+watch(currentPage, (newValue) => {
+  fetchCharacters(newValue)
+})
+
 onMounted(() => {
-  fetchCharacters()
+  const page = parseInt(useRoute().query.page)
+  if (Number.isNaN(page)) {
+    useRouter().push('/')
+  }
+  currentPage.value = page || 1
 })
 </script>
 
@@ -39,6 +51,7 @@ onMounted(() => {
     {{ error }}
   </div>
   <div v-else>
-    {{ characters }}
+    {{ currentPage }} / {{ totalPages }}
+    <pre>{{ characters }}</pre>
   </div>
 </template>

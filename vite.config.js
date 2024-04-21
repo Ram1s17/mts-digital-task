@@ -4,7 +4,7 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/mts-digital-task',
+  base: '/mts-digital-task/',
   plugins: [vue()],
   resolve: {
     alias: {

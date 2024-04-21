@@ -2,6 +2,8 @@
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CharacterService from '@/services/CharacterService'
+import LoadingStatus from '@/components/LoadingStatus.vue'
+import ErrorStatus from '@/components/ErrorStatus.vue'
 import CharacterList from '@/components/CharacterList.vue'
 import PaginationBlock from '@/components/PaginationBlock.vue'
 
@@ -9,7 +11,7 @@ const isLoading = ref(false)
 const error = ref(null)
 const characters = ref([])
 const currentPage = ref(0)
-const totalPages = ref(1)
+const totalPages = ref(0)
 
 async function fetchCharacters(page) {
   isLoading.value = true
@@ -46,15 +48,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="isLoading">
-    Loading...
-  </div>
-  <div v-else-if="!!error">
-    {{ error }}
-  </div>
-  <div v-else>
-    <character-list :list="characters"/>
-  </div>
+  <loading-status v-if="isLoading"/>
+  <error-status v-else-if="!!error"
+                :text="error"/>
+  <character-list v-else
+                  :list="characters"/>
   <pagination-block v-model:currentPage="currentPage" 
-                      :totalPages="totalPages"/>
+                    :totalPages="totalPages"/>
 </template>

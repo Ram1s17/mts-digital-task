@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import CharacterService from '@/services/CharacterService'
+import CharacterList from '@/components/CharacterList.vue'
 import PaginationBlock from '@/components/PaginationBlock.vue'
 
 const isLoading = ref(false)
@@ -52,9 +53,8 @@ onMounted(() => {
     {{ error }}
   </div>
   <div v-else>
-    {{ currentPage }} / {{ totalPages }}
-    <pre>{{ characters }}</pre>
-    <pagination-block v-model:currentPage="currentPage" 
-                      :totalPages="totalPages"/>
+    <character-list :list="characters"/>
   </div>
+  <pagination-block v-model:currentPage="currentPage" 
+                      :totalPages="totalPages"/>
 </template>
